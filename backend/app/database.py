@@ -1,17 +1,22 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# 1. Define the database file URL. We use a local SQLite file named "shared_expenses.db"
-# located in the backend folder.
-SQLALCHEMY_DATABASE_URL = "sqlite:///./shared_expenses.db"
+# Support database URLs from environments like Supabase or Neon (PostgreSQL)
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./shared_expenses.db")
 
-# 2. Create the SQLite engine.
-# check_same_thread=False is needed for SQLite when running in FastAPI because FastAPI can 
-# handle requests on multiple threads, and SQLite by default restricts requests to the same thread.
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+# Convert legacy postgres:// to postgresql:// (required by newer SQLAlchemy versions)
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Setup engine configuration depending on SQLite vs PostgreSQL
+if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+else:
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # 3. Create a SessionLocal class. Each instance of this class will represent a database session.
 # autocommit=False and autoflush=False give us transaction control.
