@@ -2,7 +2,8 @@ import { getDB } from '@/lib/db';
 
 export async function POST(request, { params }) {
   try {
-    const anomalyId = parseInt(params.id);
+    const { id } = await params;
+    const anomalyId = parseInt(id);
     const body = await request.json();
     const action = body.action;
 

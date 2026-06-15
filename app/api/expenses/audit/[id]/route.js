@@ -2,7 +2,8 @@ import { getDB } from '@/lib/db';
 
 export async function GET(request, { params }) {
   try {
-    const userId = parseInt(params.id);
+    const { id } = await params;
+    const userId = parseInt(id);
     const { searchParams } = new URL(request.url);
     const groupId = parseInt(searchParams.get('group_id') || '1');
 

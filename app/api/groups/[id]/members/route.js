@@ -2,7 +2,8 @@ import { getDB } from '@/lib/db';
 
 export async function POST(request, { params }) {
   try {
-    const groupId = parseInt(params.id);
+    const { id } = await params;
+    const groupId = parseInt(id);
     const body = await request.json();
     const { user_id, joined_at, left_at } = body;
 
