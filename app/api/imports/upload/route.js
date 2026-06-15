@@ -20,7 +20,7 @@ export async function POST(request) {
     await db.run('DELETE FROM csv_anomalies');
 
     // 2. Parse and scan CSV
-    const parsedReport = parseAndValidateCSV(csvText);
+    const parsedReport = await parseAndValidateCSV(csvText);
 
     // 3. Stage Anomalies
     for (const r of parsedReport.rows) {
